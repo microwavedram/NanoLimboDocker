@@ -31,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +41,7 @@ public final class LimboConfig {
 
     private final Path root;
 
-    private SocketAddress address;
+    private static final SocketAddress address = new InetSocketAddress("0.0.0.0", 65535);
     private int maxPlayers;
     private PingData pingData;
 
@@ -89,7 +90,6 @@ public final class LimboConfig {
 
         ConfigurationNode conf = loader.load();
 
-        address = conf.node("bind").get(SocketAddress.class);
         maxPlayers = conf.node("maxPlayers").getInt();
         pingData = conf.node("ping").get(PingData.class);
         dimensionType = conf.node("dimension").getString("the_end");

@@ -1,0 +1,9 @@
+services:
+  nanolimbo:
+    image: diffusehyperion/nanolimbo
+    restart: unless-stopped
+    container_name: nanolimbo
+    ports:
+      - "25565:65535"
+    volumes:
+      - "/path/to/settings.yml:settings.yml"
