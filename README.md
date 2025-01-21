@@ -1,3 +1,11 @@
+# NanoLimboDocker
+
+This is a multi-platform docker image to run NanoLimbo, with community patches from other people for compatability with the latest Minecraft versions.
+
+Available on Docker Hub: https://hub.docker.com/r/diffusehyperion/nanolimbo
+
+An example docker compose stack is included in the repository. Server data is stored in the `/server` directory.
+
 ## NanoLimbo
 
 This is a lightweight Minecraft limbo server, written in Java with Netty.

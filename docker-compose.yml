@@ -1,9 +1,12 @@
 services:
   nanolimbo:
-    image: diffusehyperion/nanolimbo
+    image: diffusehyperion/nanolimbo:latest
     restart: unless-stopped
     container_name: nanolimbo
     ports:
-      - "25565:65535"
+      - 25565:65535
     volumes:
-      - "/path/to/settings.yml:settings.yml"
+      - nanolimbo_data:/server
+volumes:
+  nanolimbo_data:
+    name: nanolimbo_data
