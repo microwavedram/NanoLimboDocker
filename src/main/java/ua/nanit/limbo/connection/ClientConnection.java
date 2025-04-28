@@ -105,7 +105,9 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (channel.isActive()) {
-            Log.error("Unhandled exception: ", cause);
+            Log.error("Encountered exception", cause);
+
+            ctx.close();
         }
     }
 
@@ -196,26 +198,34 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
     public void onLoginAcknowledgedReceived() {
         updateState(State.CONFIGURATION);
 
-        if (PacketSnapshots.PACKET_PLUGIN_MESSAGE != null)
+        if (PacketSnapshots.PACKET_PLUGIN_MESSAGE != null) {
             writePacket(PacketSnapshots.PACKET_PLUGIN_MESSAGE);
+        }
 
         if (clientVersion.moreOrEqual(Version.V1_20_5)) {
-            writePacket(PacketSnapshots.PACKET_KNOWN_PACKS);
-
-            if (clientVersion.moreOrEqual(Version.V1_21_4)) {
-                writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21_4);
-            } else if (clientVersion.moreOrEqual(Version.V1_21_2)) {
-                writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21_2);
-            } else if (clientVersion.moreOrEqual(Version.V1_21)) {
-                writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21);
-            } else if (clientVersion.moreOrEqual(Version.V1_20_5)) {
-                writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_20_5);
-            }
-
-            writePacket(PacketSnapshots.PACKET_UPDATE_TAGS);
-        } else {
-            writePacket(PacketSnapshots.PACKET_REGISTRY_DATA);
+            sendPacket(PacketSnapshots.PACKET_KNOWN_PACKS);
+            return;
         }
+
+        writePacket(PacketSnapshots.PACKET_REGISTRY_DATA);
+
+        sendPacket(PacketSnapshots.PACKET_FINISH_CONFIGURATION);
+    }
+
+    public void onKnownPacksReceived() {
+        if (clientVersion.moreOrEqual(Version.V1_21_5)) {
+            writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21_5);
+        } else if (clientVersion.moreOrEqual(Version.V1_21_4)) {
+            writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21_4);
+        } else if (clientVersion.moreOrEqual(Version.V1_21_2)) {
+            writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21_2);
+        } else if (clientVersion.moreOrEqual(Version.V1_21)) {
+            writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_21);
+        } else if (clientVersion.moreOrEqual(Version.V1_20_5)) {
+            writePackets(PacketSnapshots.PACKETS_REGISTRY_DATA_1_20_5);
+        }
+
+        writePacket(PacketSnapshots.PACKET_UPDATE_TAGS);
 
         sendPacket(PacketSnapshots.PACKET_FINISH_CONFIGURATION);
     }
