@@ -10,6 +10,6 @@ RUN mkdir /server
 WORKDIR /server
 VOLUME /server
 
-COPY --from=build /workdir/build/libs/*.jar /server/NanoLimbo.jar
+RUN curl -o ./NanoLimbo.jar https://github.com/Nan1t/NanoLimbo/releases/download/v1.8.1/NanoLimbo-1.8.1-all.jar
 
 ENTRYPOINT ["java", "-jar", "/server/NanoLimbo.jar"]
